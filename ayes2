@@ -15,6 +15,7 @@ _G.goldenBow = true
 _G.colorGun = true
 _G.glovesOpacity1 = true
 _G.vmOffset = true
+_G.opacityGun = true
 
 skyBox = game:GetService("Workspace").Map.Settings.Lighting.Sky
 
