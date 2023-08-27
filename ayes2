@@ -1,0 +1,224 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "TC2 < TF2", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+--Variables
+
+_G.silentaim = true
+_G.removeArms = true
+_G.neonArms = true
+_G.armColor = "Royal purple"
+_G.gunColor = "Royal purple"
+_G.armColor = 1
+_G.materialColor = "Neon"
+_G.gunMaterialColor = "Neon"
+_G.goldenBow = true
+_G.colorGun = true
+
+skyBox = game:GetService("Workspace").Map.Settings.Lighting.Sky
+
+--Tabs
+
+local Tab = Window:MakeTab({
+	Name = "Visuals",
+	Icon = "rbxassetid://10789683225",
+	PremiumOnly = false
+})
+
+local Other = Window:MakeTab({
+	Name = "Other",
+	Icon = "rbxassetid://12840064781",
+	PremiumOnly = false
+})
+
+--Functions
+
+function removeArms()
+    while _G.removeArms == true do
+		GsniperL:ClearAllChildren()
+		RsniperL:ClearAllChildren()
+		GsniperR:ClearAllChildren()
+		RsniperR:ClearAllChildren()
+
+		GsniperL.Size = Vector3.new(0.001, 0.001, 0.001)
+		RsniperL.Size = Vector3.new(0.001, 0.001, 0.001)
+		GsniperR.Size = Vector3.new(0.001, 0.001, 0.001)
+		RsniperR.Size = Vector3.new(0.001, 0.001, 0.001)
+
+        wait(0.0001)
+    end
+end
+
+function neonArms()
+    while _G.neonArms == true do
+		wait()
+		if game.Workspace:FindFirstChild("Camera") then
+			print("camera")
+			wait()
+			if game.Workspace.Camera:FindFirstChild("Arms") then
+				print("arms")
+        		wait()
+        		if game.Workspace.Camera.Arms.CSSArms:FindFirstChild("Left Arm") then
+					print("Left Arm")
+					local armL = game.Workspace.Camera.Arms.CSSArms["Left Arm"]
+					armL.BrickColor = BrickColor.new(_G.armColor)
+        		    wait()
+        		end
+				if game.Workspace.Camera.Arms.CSSArms:FindFirstChild("Right Arm") then
+					print("Right Arm")
+					local armR = game.Workspace.Camera.Arms.CSSArms["Right Arm"]
+					armR.BrickColor = BrickColor.new(_G.armColor)
+        			wait()
+				end
+			end
+		end
+    end
+end
+
+function materialArms()
+    while _G.materialArms == true do
+		wait()
+		if game.Workspace:FindFirstChild("Camera") then
+			print("camera")
+			wait()
+			if game.Workspace.Camera:FindFirstChild("Arms") then
+				print("arms")
+        		wait()
+        		if game.Workspace.Camera.Arms.CSSArms:FindFirstChild("Left Arm") then
+					print("Left Arm")
+					local armL = game.Workspace.Camera.Arms.CSSArms["Left Arm"]
+					armL.Material = Enum.Material[_G.materialColor]
+					game:GetService("Workspace").Camera.Arms.CSSArms["Left Arm"].Mesh.MeshType = Enum.MeshType.Brick
+					wait()
+        		end
+				if game.Workspace.Camera.Arms.CSSArms:FindFirstChild("Right Arm") then
+					local armR = game.Workspace.Camera.Arms.CSSArms["Right Arm"]
+					armR.Material = Enum.Material[_G.materialColor]
+					game:GetService("Workspace").Camera.Arms.CSSArms["Right Arm"].Mesh.MeshType = Enum.MeshType.Brick
+					wait()
+				end
+			end
+		end
+    end
+end
+
+function colorGun()
+    while _G.colorGun == true do
+		if game.Workspace:FindFirstChild("Camera") then
+			wait()
+			if game.Workspace.Camera:FindFirstChild("Arms") then
+				currentGun = game.Workspace.Camera.Arms
+				for I,v in pairs(currentGun:GetChildren()) do
+					if v:IsA("MeshPart") then --add any other :IsA statements if you want some other things to become transparent too
+						v.BrickColor = BrickColor.new(_G.gunColor)
+						wait(0.000000000000001)
+					end
+				end
+				wait()
+			end
+		end
+    end
+end
+
+function opacityGun()
+    while _G.opacityGun == true do
+		if game.Workspace:FindFirstChild("Camera") then
+			wait()
+			if game.Workspace.Camera:FindFirstChild("Arms") then
+				currentGun = game.Workspace.Camera.Arms
+				for I,v in pairs(currentGun:GetChildren()) do
+					if v:IsA("MeshPart") then --add any other :IsA statements if you want some other things to become transparent too
+						v.Transparency = (_G.gunOpacity * 0.01)
+						wait(0.000000000000001)
+					end
+				end
+				wait()
+			end
+		end
+    end
+end
+
+Tab:AddToggle({
+	Name = "No Arms???",
+	Default = false,
+	Callback = function(Value)
+        _G.removeArms = Value
+        removeArms()
+	end    
+})
+
+Tab:AddToggle({
+	Name = "Arms color changer",
+	Default = false,
+	Callback = function(Value)
+        _G.neonArms = Value
+        neonArms()
+	end    
+})
+
+Tab:AddDropdown({
+	Name = "Arms color",
+	Default = "Royal purple",
+	Options = {"Royal purple", "Toothpaste", "Gold", "Bright red", "Bright yellow", "Bright blue", "Tr. Red", "White", "Pink"},
+	Callback = function(Value)
+		_G.armColor = Value
+	end    
+})
+
+Tab:AddToggle({
+	Name = "Arms material changer",
+	Default = false,
+	Callback = function(Value)
+        _G.materialArms = Value
+        materialArms()
+	end    
+})
+
+Tab:AddDropdown({
+	Name = "Arms material",
+	Default = "Neon",
+	Options = {"Neon", "Glass", "Rubber"},
+	Callback = function(Value)
+		_G.materialColor = Value
+	end    
+})
+
+Tab:AddToggle({
+	Name = "Gun color changer",
+	Default = false,
+	Callback = function(Value)
+        _G.colorGun = Value
+        colorGun()
+	end    
+})
+
+Tab:AddDropdown({
+	Name = "Gun color",
+	Default = "Royal purple",
+	Options = {"Royal purple", "Toothpaste", "Gold", "Bright red", "Bright yellow", "Bright blue", "Tr. Red", "White", "Pink"},
+	Callback = function(Value)
+		_G.gunColor = Value
+	end    
+})
+
+Tab:AddToggle({
+	Name = "Gun opacity",
+	Default = false,
+	Callback = function(Value)
+        _G.opacityGun = Value
+        opacityGun()
+	end    
+})
+
+Tab:AddSlider({
+	Name = "Gun opacity",
+	Min = 0,
+	Max = 100,
+	Default = 0,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "opacity",
+	Callback = function(Value)
+		_G.gunOpacity = Value
+	end    
+})
