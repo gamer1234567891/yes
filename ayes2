@@ -9,11 +9,12 @@ _G.removeArms = true
 _G.neonArms = true
 _G.armColor = "Royal purple"
 _G.gunColor = "Royal purple"
-_G.armColor = 1
 _G.materialColor = "Neon"
 _G.gunMaterialColor = "Neon"
 _G.goldenBow = true
 _G.colorGun = true
+_G.glovesOpacity1 = true
+_G.vmOffset = true
 
 skyBox = game:GetService("Workspace").Map.Settings.Lighting.Sky
 
@@ -32,22 +33,6 @@ local Other = Window:MakeTab({
 })
 
 --Functions
-
-function removeArms()
-    while _G.removeArms == true do
-		GsniperL:ClearAllChildren()
-		RsniperL:ClearAllChildren()
-		GsniperR:ClearAllChildren()
-		RsniperR:ClearAllChildren()
-
-		GsniperL.Size = Vector3.new(0.001, 0.001, 0.001)
-		RsniperL.Size = Vector3.new(0.001, 0.001, 0.001)
-		GsniperR.Size = Vector3.new(0.001, 0.001, 0.001)
-		RsniperR.Size = Vector3.new(0.001, 0.001, 0.001)
-
-        wait(0.0001)
-    end
-end
 
 function neonArms()
     while _G.neonArms == true do
@@ -109,7 +94,7 @@ function colorGun()
 			if game.Workspace.Camera:FindFirstChild("Arms") then
 				currentGun = game.Workspace.Camera.Arms
 				for I,v in pairs(currentGun:GetChildren()) do
-					if v:IsA("MeshPart") then --add any other :IsA statements if you want some other things to become transparent too
+					if v:IsA("MeshPart") then
 						v.BrickColor = BrickColor.new(_G.gunColor)
 						wait(0.000000000000001)
 					end
@@ -120,14 +105,32 @@ function colorGun()
     end
 end
 
-function opacityGun()
-    while _G.opacityGun == true do
+function vmOffset()
+    while _G.vmOffset == true do
+		wait()
 		if game.Workspace:FindFirstChild("Camera") then
+			print("camera")
+			wait()
+			if game.Workspace.Camera:FindFirstChild("Arms") then
+				wait()
+				if game.Workspace.Camera.Arms:FindFirstChild("Offset") then
+					armOffset = game.Workspace.Camera.Arms.Offset
+					armOffset.Value = Vector3.new(_G.xOffset * 0.5, _G.yOffset * 0.5, _G.zOffset * 0.5)
+					wait()
+				end
+			end
+		end
+    end
+end
+
+coroutine.wrap(function()
+	while _G.opacityGun == true do
+		if game.Workspace:FindFirstChild("Camera") then			
 			wait()
 			if game.Workspace.Camera:FindFirstChild("Arms") then
 				currentGun = game.Workspace.Camera.Arms
 				for I,v in pairs(currentGun:GetChildren()) do
-					if v:IsA("MeshPart") then --add any other :IsA statements if you want some other things to become transparent too
+					if v:IsA("MeshPart") then
 						v.Transparency = (_G.gunOpacity * 0.01)
 						wait(0.000000000000001)
 					end
@@ -135,16 +138,43 @@ function opacityGun()
 				wait()
 			end
 		end
-    end
-end
+	end
+end)()
 
-Tab:AddToggle({
-	Name = "No Arms???",
-	Default = false,
-	Callback = function(Value)
-        _G.removeArms = Value
-        removeArms()
-	end    
+coroutine.wrap(function()
+	while _G.glovesOpacity1 == true do
+		if game.Workspace:FindFirstChild("Camera") then			
+			wait()
+			if game.Workspace.Camera:FindFirstChild("Arms") then
+				wait()
+        		if game.Workspace.Camera.Arms.CSSArms:FindFirstChild("Left Arm") then
+					print("Left Arm")
+					local armL = game.Workspace.Camera.Arms.CSSArms["Left Arm"]
+					for I,v in pairs(armL:GetChildren()) do
+						if v:IsA("MeshPart") then
+							v.Transparency = (_G.glovesOpacity * 0.01)
+							wait(0.000000000000001)
+						end
+					end
+					wait()
+        		end
+				if game.Workspace.Camera.Arms.CSSArms:FindFirstChild("Right Arm") then
+					local armR = game.Workspace.Camera.Arms.CSSArms["Right Arm"]
+					for I,v in pairs(armR:GetChildren()) do
+						if v:IsA("MeshPart") then
+							v.Transparency = (_G.glovesOpacity * 0.01)
+							wait(0.000000000000001)
+						end
+					end
+					wait()
+				end
+			end
+		end
+	end
+end)()
+
+local Section = Tab:AddSection({
+	Name = "Arm mods"
 })
 
 Tab:AddToggle({
@@ -156,15 +186,13 @@ Tab:AddToggle({
 	end    
 })
 
-Tab:AddDropdown({
-	Name = "Arms color",
-	Default = "Royal purple",
-	Options = {"Royal purple", "Toothpaste", "Gold", "Bright red", "Bright yellow", "Bright blue", "Tr. Red", "White", "Pink"},
+Tab:AddColorpicker({
+	Name = "Arm color",
+	Default = Color3.fromRGB(255, 0, 0),
 	Callback = function(Value)
 		_G.armColor = Value
-	end    
+	end	  
 })
-
 Tab:AddToggle({
 	Name = "Arms material changer",
 	Default = false,
@@ -175,12 +203,81 @@ Tab:AddToggle({
 })
 
 Tab:AddDropdown({
-	Name = "Arms material",
+	Name = "Arm material",
 	Default = "Neon",
 	Options = {"Neon", "Glass", "Rubber"},
 	Callback = function(Value)
 		_G.materialColor = Value
 	end    
+})
+
+Tab:AddSlider({
+	Name = "Arm accessories opacity",
+	Min = 0,
+	Max = 100,
+	Default = 0,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "opacity",
+	Callback = function(Value)
+		_G.glovesOpacity = Value
+	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Viewmodel offset"
+})
+
+Tab:AddToggle({
+	Name = "Viewmodel offset toggle",
+	Default = false,
+	Callback = function(Value)
+        _G.vmOffset = Value
+        vmOffset()
+	end    
+})
+
+Tab:AddSlider({
+	Name = "X offset",
+	Min = -10,
+	Max = 10,
+	Default = 0,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "y offset",
+	Callback = function(Value)
+		_G.xOffset = Value
+	end    
+})
+
+Tab:AddSlider({
+	Name = "Y offset",
+	Min = -10,
+	Max = 10,
+	Default = 0,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "y offset",
+	Callback = function(Value)
+		_G.yOffset = Value
+	end    
+})
+
+Tab:AddSlider({
+	Name = "Z offset",
+	Min = -10,
+	Max = 10,
+	Default = 0,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "y offset",
+	Callback = function(Value)
+		_G.zOffset = Value
+	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Gun mods"
 })
 
 Tab:AddToggle({
@@ -192,22 +289,12 @@ Tab:AddToggle({
 	end    
 })
 
-Tab:AddDropdown({
+Tab:AddColorpicker({
 	Name = "Gun color",
-	Default = "Royal purple",
-	Options = {"Royal purple", "Toothpaste", "Gold", "Bright red", "Bright yellow", "Bright blue", "Tr. Red", "White", "Pink"},
+	Default = Color3.fromRGB(255, 0, 0),
 	Callback = function(Value)
 		_G.gunColor = Value
-	end    
-})
-
-Tab:AddToggle({
-	Name = "Gun opacity",
-	Default = false,
-	Callback = function(Value)
-        _G.opacityGun = Value
-        opacityGun()
-	end    
+	end	  
 })
 
 Tab:AddSlider({
@@ -222,3 +309,32 @@ Tab:AddSlider({
 		_G.gunOpacity = Value
 	end    
 })
+
+
+Other:AddButton({
+	Name = "Esp (not mine)",
+	Callback = function()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/zachisfunny/esp-unversal/main/script'),true))()
+  	end    
+})
+
+Other:AddButton({
+	Name = "Silent aim (not mine)",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Trashjpg/Rage/main/TC2.lua"))()
+  	end    
+})
+
+Other:AddButton({
+	Name = "Silly button (⚠️Dont press⚠️)",
+	Callback = function()
+		OrionLib:MakeNotification({
+			Name = "Silly button pressed",
+			Content = "Why did you do that, i told you not to press it you little silly goofy goober",
+			Image = "rbxassetid://11154422902",
+			Time = 6
+		})
+  	end    
+})
+
+OrionLib:Init()
